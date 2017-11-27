@@ -8,6 +8,10 @@
 #define STR_BUFFER_SIZE 500
 #define MAX_STRING_NUM 99
 
+/*! \brief Show program name "String Calculator"
+ *
+ * \return void
+ */
 void showProgramName(void)
 {
 	printf("\n");
@@ -23,6 +27,12 @@ void showProgramName(void)
 	printf("\n");
 }
 
+/*! \brief Show program's main menu
+ *
+ *  Both digit's and letter's input can be handled
+ *
+ * \return void
+ */
 void showMenu(void)
 {
 	printf("\n");
@@ -44,6 +54,17 @@ void showMenu(void)
 	printf("请 输 入 要 进 行 的 操 作 (数 字 或 字 母):");
 }
 
+/*! \brief Convert operator from string to int
+ *
+ *  Examples:
+ *  	"1" -> 1
+ *  	"10" -> 10
+ *  	"a" -> 97
+ *  	"q" -> 113
+ *
+ * \param Operator in string form
+ * \return Operator in int form
+ */
 int convertInputToCommand(char *input)
 {
 	if (lengthOfString(input) > 2 || lengthOfString(input) == 0)
@@ -63,6 +84,13 @@ int convertInputToCommand(char *input)
 	}
 }
 
+/*! \brief Initialize string data by dynamic allocation
+ *
+ *  Dynamically allocate a 2-D char ** pointer according to current capacity
+ *
+ * \param Current capacity of string data
+ * \return Dynamically allocated 2-D pointer
+ */
 char **initializeStringData(unsigned int capacity)
 {
 	char **stringData = (char **)malloc(capacity * sizeof(char *));
@@ -75,6 +103,26 @@ char **initializeStringData(unsigned int capacity)
 	return stringData;
 }
 
+void destroyStringData(char **stringData, unsigned int capacity)
+{
+	int i;
+	for (i = 0; i < capacity; ++i)
+	{
+		if (*(stringData + i) != NULL)
+			free(*(stringData + i));
+	}
+	free(stringData);
+}
+
+/*! \brief Expand string data capacity
+ *
+ *  Expand string data capacity depend
+ *
+ * \param Original string data
+ * \param pointer to capacity
+ * \param Insert position
+ * \return New pointer
+ */
 char **expandCapacity(char **stringData, unsigned int *capacity, unsigned int position)
 {
 	unsigned int newCapacity = *capacity;
@@ -360,6 +408,7 @@ void runLoop(void)
 		filterEndline(input);
 		command = convertInputToCommand(input);
 	}
+	destroyStringData(stringData, capacity);
 }
 
 int main(int argc, char *argv[])
