@@ -34,3 +34,16 @@ void inputPosition(unsigned int *position, unsigned int lowerBound, unsigned int
 		clearInputBuffer();
 	}
 }
+
+int decideOverwrite(char **stringData, unsigned int position)
+{
+	if (*(stringData + position - 1) != NULL)
+	{
+		printf("该 位 置 上 已 有 字 符 串, 是 否 覆 盖 (y / n):");
+		char choice = getchar();
+		clearInputBuffer();
+		if (choice != 'y')
+			return 0;
+	}
+	return 1;
+}

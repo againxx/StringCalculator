@@ -216,7 +216,7 @@ void runLoop(void)
 	filterEndline(input);
 	int command = convertInputToCommand(input);
 
-	unsigned int position1, position2;
+	unsigned int position1, position2, position3, num;
 	while (command != 'q' && command != 12)
 	{
 		switch (command)
@@ -233,16 +233,9 @@ void runLoop(void)
 				if (position1 > capacity)
 					stringData = expandCapacity(stringData, &capacity, position1);
 
-				if (*(stringData + position1 - 1) != NULL)
-				{
-					printf("该 位 置 上 已 有 字 符 串, 是 否 覆 盖 (y / n):");
-					char choice = getchar();
-					clearInputBuffer();
-					if (choice != 'y')
-						break;
-				}
+				if (decideOverwrite(stringData, position1))
+					inputString(stringData, capacity, input, position1);
 
-				inputString(stringData, capacity, input, position1);
 				break;
 			case  2:
 			case 'v':
@@ -283,31 +276,80 @@ void runLoop(void)
 				printf("请 输 入 要 复 制 的 字 符 串 的 位 置 (源 串):");
 				inputPosition(&position2, 1, capacity);
 
-				if (*(stringData + position1 - 1) != NULL)
-				{
-					printf("该 位 置 上 已 有 字 符 串, 是 否 覆 盖 (y / n):");
-					char choice = getchar();
-					clearInputBuffer();
-					if (choice != 'y')
-						break;
-				}
-				*(stringData + position1 - 1) = copyString(*(stringData + position1 - 1), *(stringData + position2 - 1));
+				if (decideOverwrite(stringData, position1))
+					*(stringData + position1 - 1) = copyString(*(stringData + position1 - 1), *(stringData + position2 - 1));
+
 				break;
 			case  8:
 			case 'i':
-
+				printf("请 输 入 要 插 入 的 字 符 串 的 位 置 (主 串):");
+				inputPosition(&position1, 1, capacity);
+				printf("请 输 入 要 插 入 的 字 符 串 的 位 置 (子 串):");
+				inputPosition(&position2, 1, capacity);
+				printf("请 输 入 在 主 串 中 插 入 的 位 置:");
+				inputPosition(&position3, 0, lengthOfString(*(stringData + position1 - 1)));
+				*(stringData + position1 - 1) = insertString(*(stringData + position1 - 1), position3, *(stringData + position2 - 1));
 				break;
 			case  9:
 			case 's':
+				printf("请 输 入 要 求 子 串 的 字 符 串 的 位 置:");
+				inputPosition(&position1, 1, capacity);
+				printf("请 输 入 子 串 的 开 始 位 置:");
+				inputPosition(&position2, 0, lengthOfString(*(stringData + position1 - 1)) - 1);
+				printf("请 输 入 子 串 的 长 度:");
+				inputPosition(&num, 0, lengthOfString(*(stringData + position1 - 1)) - position2);
+
+				char *newStr = subString(*(stringData + position1 - 1), position2, num);
+
+				printf("获 得 的 子 串 为: %s, 是 否 保 存 (y / n):", newStr);
+				char choice = getchar();
+				clearInputBuffer();
+				if (choice != 'y')
+				{
+					free(newStr);
+				}
+				else
+				{
+					printf("请 输 入 保 存 的 位 置:");
+					inputPosition(&position1, 1, capacity);
+					if (decideOverwrite(stringData, position1))
+					{
+						*(stringData + position1 - 1) = newStr;
+					}
+				}
 
 				break;
 			case 10:
 			case 'f':
+				printf("请 输 入 要 查 找 的 字 符 串 的 位 置 (主 串):");
+				inputPosition(&position1, 1, capacity);
+				printf("请 输 入 要 查 找 的 字 符 串 的 位 置 (子 串):");
+				inputPosition(&position2, 1, capacity);
 
+				if (lengthOfString(*(stringData + position2 - 1)) == 0)
+					printf("子 串 为 空!\n");
+				else
+				{
+					int foundPlace = searchString(*(stringData + position1 - 1), *(stringData + position2 - 1));
+					if (foundPlace == -1)
+						printf("没 有 找 到 子 串!\n");
+					else
+						printf("子 串 所 在 的 下 标: %d\n", foundPlace);
+				}
 				break;
 			case 11:
 			case 'r':
+				printf("请 输 入 要 置 换 的 字 符 串 的 位 置 (主 串):");
+				inputPosition(&position1, 1, capacity);
+				printf("请 输 入 要 置 换 的 字 符 串 的 位 置 (查 找 串):");
+				inputPosition(&position2, 1, capacity);
+				printf("请 输 入 要 置 换 的 字 符 串 的 位 置 (置 换 串):");
+				inputPosition(&position3, 1, capacity);
 
+				*(stringData + position1 - 1) = replaceString(*(stringData + position1 - 1),
+															  *(stringData + position2 - 1),
+															  *(stringData + position3 - 1));
+				
 				break;
 			default:
 				printf("操 作 不 正 确，请 重 新 输 入:");

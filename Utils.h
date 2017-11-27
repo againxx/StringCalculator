@@ -9,4 +9,6 @@ void clearInputBuffer(void);
 
 void inputPosition(unsigned int *position, unsigned int lowerBound, unsigned int upperBound);
 
+int decideOverwrite(char **stringData, unsigned int position);
+
 #endif /* ifndef UTILS_H_ */
