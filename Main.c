@@ -141,10 +141,9 @@ char **expandCapacity(char **stringData, unsigned int *capacity, unsigned int po
 		if (*(tempData + i) != NULL)
 		{
 			*(stringData + i) = *(tempData + i);
-			free(*(tempData + i));
 		}
 	}
-
+	free(tempData);
 	*capacity = newCapacity;
 	return stringData;
 }
